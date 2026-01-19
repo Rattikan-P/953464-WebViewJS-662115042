@@ -140,6 +140,12 @@
         FlutterChannel.postMessage(currentTotal.toString());
       }
     }
+
+    // 3: Receive updated total from Flutter
+    function updateTotalFromFlutter(newTotal) {
+      currentTotal = newTotal;
+      updateTotalDisplay();
+    }
   </script>
 </body>
 </html>

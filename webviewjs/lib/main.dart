@@ -87,6 +87,25 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
+
+          // 3: Button to send data to JS
+          Container(
+            padding: const EdgeInsets.all(12.0),
+            color: Colors.blue[50],
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: totalFromJS.isEmpty ? null : sendDataToJS,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(16),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                'Send +100 total from Flutter to JS',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
         ],
       ),
     );
