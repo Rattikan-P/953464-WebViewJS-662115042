@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    
+    h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #000;
+    }
+    
+    h2 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: #000;
+    }
+    
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .item-name {
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .add-btn {
+      background-color: #e3f2fd;
+      color: #2196F3;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .add-btn:active {
+      background-color: #bbdefb;
+    }
+    
+    .cart-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+    }
+    
+    .total-label {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    
+    #total {
+      font-size: 24px;
+      font-weight: bold;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Cart</h1>
+  
+    <!-- item List -->
+  <div class="item">
+    <span class="item-name">Apple - $30</span>
+    <button class="add-btn" onclick="addToCart(30)">Add</button>
+  </div>
+  
+  <div class="item">
+    <span class="item-name">Banana - $20</span>
+    <button class="add-btn" onclick="addToCart(20)">Add</button>
+  </div>
+  
+  <div class="item">
+    <span class="item-name">Orange - $25</span>
+    <button class="add-btn" onclick="addToCart(25)">Add</button>
+  </div>
+  
+  <div class="item">
+    <span class="item-name">Milk - $45</span>
+    <button class="add-btn" onclick="addToCart(45)">Add</button>
+  </div>
+  
+  <div class="item">
+    <span class="item-name">Bread - $35</span>
+    <button class="add-btn" onclick="addToCart(35)">Add</button>
+  </div>
+  
+    <!-- Shopping Cart Total Section -->
+  <div class="cart-section">
+    <h2>Cart</h2>
+    <p class="total-label">Total:</p>
+    <p id="total">$0</p>
+  </div>
+
+  <script>
+    // Global Variables
+    let currentTotal = 0;
+
+    // Add to Cart Function
+    function addToCart(price) {
+      currentTotal += price;
+      updateTotalDisplay();
+      sendTotalToFlutter(); // Send updated total to Flutter
+    }
+
+    // Update total display
+    function updateTotalDisplay() {
+      document.getElementById('total').innerText = '$' + currentTotal;
+    }
+
+    // 2: Send total to Flutter
+    function sendTotalToFlutter() {
+      if (typeof FlutterChannel !== 'undefined') {
+        FlutterChannel.postMessage(currentTotal.toString());
+      }
+    }
+  </script>
+</body>
+</html>

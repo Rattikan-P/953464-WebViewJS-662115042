@@ -8,16 +8,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'WebView JS',
       theme: ThemeData(
-        // This is the theme of your application.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'RATTIKAN WebView JS'),
     );
   }
 }
@@ -32,13 +30,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late WebViewController _controller;
-  String totalFromJS = "";
+  String totalFromJS = ""; // Store data received from JS
 
   @override
   void initState() {
     super.initState();
+    
+    // 1: Setup WebView and load HTML
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      
+      // 2: Receive JS through FlutterChannel
       ..addJavaScriptChannel(
         'FlutterChannel',
         onMessageReceived: (JavaScriptMessage message) {
@@ -47,7 +49,16 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
       )
-      ..loadHtmlString(htmlContent);
+      ..loadFlutterAsset('assets/challenge_webview.html');
+  }
+
+  // 3: Send data to JS
+  void sendDataToJS() {
+    if (totalFromJS.isNotEmpty) {
+      int currentTotal = int.parse(totalFromJS);
+      int newTotal = currentTotal + 100;
+      _controller.runJavaScript('updateTotalFromFlutter($newTotal)');
+    }
   }
 
   @override
@@ -57,51 +68,27 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(child: Column(
+      body: Column(
         children: [
+          // WebView Area
           Expanded(
             child: WebViewWidget(controller: _controller),
           ),
+          
+          // 2: Show data received from JS
           Container(
             padding: const EdgeInsets.all(12.0),
             color: Colors.grey[200],
             width: double.infinity,
             child: Center(
-              child: Text('Receive from JS: $totalFromJS',
-              style: const TextStyle(fontSize: 18),
+              child: Text(
+                'Received from JS: ${totalFromJS.isEmpty ? "-" : "\$$totalFromJS"}',
+                style: const TextStyle(fontSize: 18),
               ),
             ),
           ),
         ],
-      )),
+      ),
     );
   }
 }
-
-const String htmlContent = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopping Cart</title>
-</head>
-<body>
-  <h1>My Cart</h1>
-  <p id="total">Total: \$120</p>
-
-  <button style="padding: 16px 32px; font-size: 20px; width: 100%"
-          onclick="sendTotalToFlutter()">
-    Send Total to Flutter
-  </button>
-
-  <script>
-    function sendTotalToFlutter() {
-      var totalPrice = document.getElementById('total').innerText;
-      FlutterChannel.postMessage(totalPrice);
-    }
-  </script>
-</body>
-</html>
-""";
-
